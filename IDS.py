@@ -39,18 +39,27 @@ def main():
 
     # Subcommand for alert
     parser_alert = subparser.add_parser("alert", help="Run the alert engine.")
-    parser_alert.add_argument("stats_file", help="The file containing the stats data.")
-    parser_alert.add_argument("days",help="The number of days to generate activity for starting from today.")
 
 
     args = parser.parse_args()
 
 
     if args.command == "setup":
+        # * Input validation
+        if not os.path.exists(args.events_file):
+            print("Events file does not exist")
+            return
+        if not os.path.exists(args.stats_file):
+            print("Stats file does not exist")
+            return
+        if not args.days.isdigit() and int(args.days) <= 0:
+            print("Invalid number of days")
+            return
         days = int(args.days)
         base_day = datetime.now().date()
         end_day = base_day + timedelta(days=(days-1))
-        # Setup
+
+        # * Setup
         print(f"\n *** Initialising IDS ***")
         print(f"=> Setting Date Range")
         print(f"Start Date: {base_day}, End Date: {end_day}")
@@ -92,7 +101,29 @@ def main():
         print(f"=> Analysis complete")
     elif args.command == "alert":
         print(f"\n*** Alert Engine Monitoring ***")
-        alertEngine(args.stats_file,args.days)
+        while True:
+            print(f"""
+*** Alert Engine Menu ***
+1. Run Alert Engine
+2. Exit
+            """)
+            choice = input("Enter your choice: ")
+            if choice == "2":
+                break
+            else:
+                stats_file = input("Enter the stats file to use: ")
+                days = input("Enter the number of days to generate events: ")
+
+                # input validation
+                if not os.path.exists(stats_file):
+                    print("File does not exist")
+                    continue
+                if not days.isdigit() and int(days) <= 0:
+                    print("Invalid number of days")
+                    continue
+
+                # Run the alert engine
+                alertEngine(stats_file,days)
 
 
 

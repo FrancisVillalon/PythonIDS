@@ -31,6 +31,7 @@ def consolidateData(folderPath,outputPath):
 
 
 def analysisEngine(baseline=False):
+    print("\n*** Running Analysis Engine ***")
     # * Analysis engine setup
     if not os.path.exists('./data/temp'):
         os.makedirs('./data/temp')
@@ -83,7 +84,8 @@ def analysisEngine(baseline=False):
                 eventStatData = EventStats(i,k['Mean'],k['StdDev'])
                 db['BaseLineEventStats'][i] = eventStatData
         exportedBaseline = export_shelve_table('BaseLineEventStats')
-        print(f"=> New Baseline event statistics stored in {exportedBaseline}")
+        print(f"=> BaseLineEventStats updated!")
+        print(f"=> New Baseline event statistics exported into {exportedBaseline}")
 
     print(f"\n => Event Daily Totals ")
     dailyTotals = pd.DataFrame()
@@ -94,6 +96,7 @@ def analysisEngine(baseline=False):
     dailyTotals.to_csv(f'./data/{base_day}_{end_day}_dailyTotals.csv',index=True)
     print(dailyTotals)
     print(f"=> Event daily totals stored in ./data/{base_day}_{end_day}_dailyTotals.csv")
+    print("*** Analysis Engine Completed ***\n")
 
 
 

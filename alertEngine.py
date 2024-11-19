@@ -28,7 +28,6 @@ def calculateAnomaly(std,mean,weight,value):
 
 
 def alertEngine(stats_file, days):
-
     # * date range
     days = int(days)
     base_day = datetime.now().date()
@@ -90,7 +89,6 @@ def alertEngine(stats_file, days):
     # * Analyse generated events but do not update baseline
     analysisEngine(baseline=False)
 
-    print(eventStats)
     # * Read in the analysis results
     dailyTotals = pd.read_csv(f'./data/{base_day}_{end_day}_dailyTotals.csv')
     dailyTotals.columns = ['Event'] + dailyTotals.columns[1:].tolist()
@@ -110,8 +108,7 @@ def alertEngine(stats_file, days):
     anomalyScore = anomalyScore.T
     anomalyScore['Total Score'] = anomalyScore.sum(axis=1)
     anomalyScore['Anomaly'] = anomalyScore['Total Score'] > threshold
+    anomalyScore.rename_axis("Day", inplace=True)
 
     print(f"\nAnomaly Score")
     print(anomalyScore)
-
-    

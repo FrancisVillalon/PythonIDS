@@ -9,6 +9,7 @@ from src.db import *
 from datetime import datetime, timedelta
 
 def activityEngine(base_day,days):
+		print(f" \n*** Running Actvity Engine ***")
 		# Set Daytime
 		print(f"Generate Events for {datetime.now().date()}")
 		print(f"Start Date: {base_day}, End Date: {base_day + timedelta(days=days)}")
@@ -41,4 +42,5 @@ def activityEngine(base_day,days):
 
 						print(f"=> {key} Events generated for {day} and stored in {file_path}")# 
 					print(f"===> {key} Events generated for {days} days")
+		print(f" *** Activity Engine Completed ***\n")
 			
