@@ -4,6 +4,7 @@ Continuous events can take any real value and can occur multiple times
 '''
 import numpy as np 
 import json
+from scipy.stats import truncnorm
 
 # Used to get event stats from Stats.txt
 class EventStats:
@@ -40,31 +41,21 @@ class EventGenerator:
 
     def generate(self):
         if self.type == 'D':
-            # * Returns an array of integer values 
-            # * each element is the number of events for that day
             values = np.random.normal(loc=self.mean, scale=self.std, size=self.days)
             values = [int(round(value)) for value in values]
         else:
-            # * Returns an array of float values
-            # * each element is the occurence of an event that day
-            values = []
-            current_sum = 0
-            while current_sum < self.max:
-                value = np.random.normal(loc=self.mean, scale=self.std)
-                if current_sum + value > self.max:
-                    break
-                values.append(value)
-                current_sum += value
-            values = np.array(values)
-            values = np.clip(values, self.min, self.max)
+            upper_bound = (self.max - self.mean) / self.std
+            lower_bound = (self.min - self.mean) / self.std
+            values = truncnorm.rvs(lower_bound, upper_bound, loc=self.mean, scale=self.std, size=self.days)
+        values = np.clip(values, self.min, self.max)
         return values
 
 
-class EventLogDiscrete:
-    def __init__(self, eventName, eventTime):
+class EventLog:
+    def __init__(self, eventName, eventTime,eventValue):
         self.eventName = eventName
         self.time = eventTime
-        self.eventValue = 1
+        self.eventValue = eventValue
 
     def __repr__(self):
         return f'EventTime: {self.time}, EventName: {self.eventName}'
@@ -75,25 +66,6 @@ class EventLogDiscrete:
             'EventName': str(self.eventName),
             'EventValue': str(self.eventValue),
         }
-    def to_json(self):
-        return json.dumps(self.to_dict())
 
 
-class EventLogContinuous:
-    def __init__(self, eventName, eventTime,eventValue):
-        self.eventName = eventName
-        self.time = eventTime
-        self.value = eventValue
-
-    def __repr__(self):
-        return f'EventTime: {self.time}, EventName: {self.eventName}, EventValue: {self.value}'
-    
-    def to_dict(self):
-        return {
-            'EventTime': str(self.time),
-            'EventName': str(self.eventName),
-            'EventValue': str(self.value),
-        }
-    def to_json(self):
-        return json.dumps(self.to_dict())
 

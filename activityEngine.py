@@ -7,69 +7,38 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from src.models import *
 from src.db import *
 from datetime import datetime, timedelta
-import pandas as pd
 
-def generateDiscreteEvents(target_day,Events,logFile,i,EventGenerator):
-  EventData = []
-  with open(logFile, 'w') as file:
-    EventLog = EventLogDiscrete(
-      EventGenerator.name,
-      target_day)
-    for _ in range(int(Events[i])):
-      EventData.append(EventLog.to_dict())
-    json.dump(EventData, file, indent=2)
-  return
+def activityEngine(base_day,days):
+		# Set Daytime
+		print(f"Generate Events for {datetime.now().date()}")
+		print(f"Start Date: {base_day}, End Date: {base_day + timedelta(days=days)}")
+		daysLogged = [base_day + timedelta(days=i) for i in range(days)]
 
-def generateContinuousEvents(target_day,logFile,i,EventGenerator):
-  EventData = []
-  Events = EventGenerator.generate()
-  with open(logFile, 'w') as file:
-    for event in Events:
-      EventLog = EventLogContinuous(
-        EventGenerator.name,
-        target_day,
-        event
-        )
-      EventData.append(EventLog.to_dict())
-    json.dump(EventData, file, indent=2)
-  return
+		# Generate 
+		with shelve.open('csci262asgn3') as db:
+			 for key in db['EventStats']:
+					print(f"\n===> Generating {key} Events")
+					EventStats = get_from_shelve('EventStats', key)
+					EventData = get_from_shelve('Event', key)
+					print(f"{key} Generator initiated with mean: {EventStats.mean}, stdDev: {EventStats.stdDev}, min: {EventData.min}, max: {EventData.max}")
+					generator = EventGenerator(
+						key,
+						EventData.type,
+						EventStats.mean,
+						EventStats.stdDev,
+						EventData.min,
+						EventData.max,
+						days
+						)
+					Events = generator.generate()
+					for i, day in enumerate(daysLogged):
+						if not os.path.exists(f"./logs/{day}"):
+							os.makedirs(f"./logs/{day}")
+						file_path = f"./logs/{day}/{day}_{key}.json"
+						eventLogs = [EventLog(key,day,Events[i],).to_dict()]
+						with open(file_path, 'w') as file:
+							json.dump(eventLogs, file,indent=4)
 
-
-# main
-def activityEngine(days):
-    print("\n---------------------------------")
-    # Set Daytime
-    base_day = datetime.now().date()
-    print(f"Generate Events for {datetime.now().date()}")
-    print(f"Start Date: {base_day}, End Date: {base_day + timedelta(days=days)}")
-
-    # Generate 
-    with shelve.open('csci262asgn3') as db:
-       for key in db['EventStats']:
-          print("\n---------------------------------")
-          print(f"=> Generating {key} Events")
-          EventStats = get_from_shelve('EventStats', key)
-          EventData = get_from_shelve('Event', key)
-          print(f"{key} Generator initiated with mean: {EventStats.mean}, stdDev: {EventStats.stdDev}, min: {EventData.min}, max: {EventData.max}")
-          EventGen = EventGenerator(
-            key,
-            EventData.type,
-            EventStats.mean,
-            EventStats.stdDev,
-            EventData.min,
-            EventData.max,
-            days
-            )
-          Events = EventGen.generate()
-          for i in range(days):
-            target_day = base_day + timedelta(days=i)
-            base_path = f"./logs/{target_day}"
-            if not os.path.exists(base_path):
-              os.makedirs(base_path)
-            file_path = f'{base_path}/{target_day}_{key}_Logs.json'
-            if EventData.type == 'D':
-              generateDiscreteEvents(target_day,Events,file_path,i,EventGen)
-            else:
-              generateContinuousEvents(target_day,file_path,i,EventGen)
-
-          print(f"=> {key} Events generated and stored in {file_path}")
+						print(f"=> {key} Events generated for {day} and stored in {file_path}")# 
+					print(f"===> {key} Events generated for {days} days")
+			
