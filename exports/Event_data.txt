@@ -1,6 +1,0 @@
-5
-Logins:Logins:D:0.0:inf:2.0:
-Time online:Time online:C:0.0:1440.0:3.0:
-Emails sent:Emails sent:D:0.0:inf:1.0:
-Emails opened:Emails opened:D:0.0:inf:1.0:
-Emails deleted:Emails deleted:D:0.0:inf:2.0:

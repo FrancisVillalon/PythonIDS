@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 import shelve
 import os 
+from src.models import EventStats, Event
+from src.db import *
 
 def parseData(folderPath,outputPath):
     df = pd.DataFrame(columns=['EventTime','EventName','EventValue'])
@@ -28,7 +30,7 @@ def consolidateData(folderPath,outputPath):
     return df
 
 
-def analysisEngine(base_day,end_day):
+def analysisEngine(baseline=False):
     # * Analysis engine setup
     if not os.path.exists('./data/temp'):
         os.makedirs('./data/temp')
@@ -36,11 +38,17 @@ def analysisEngine(base_day,end_day):
 
     # * Parse data
     print('===> Parsing data')
+    parsedDays = []
     for day in os.listdir('./logs'):
         day_path = os.path.join('./logs', day)
         if os.path.isdir(day_path):
             parseData(day_path, f'{temp_dir}/{day}.csv')
+            parsedDays.append(day)
             print(f'=> Parsed data for {day}')
+    parsedDays.sort()
+    base_day = parsedDays[0]
+    end_day = parsedDays[-1]
+    
 
     # * Consolidate
     print('===> Consolidating data')
@@ -65,7 +73,17 @@ def analysisEngine(base_day,end_day):
     eventStats.columns = ['Mean', 'StdDev']
     eventStats.to_csv(f'./data/{base_day}_{end_day}_eventStats.csv',index=True)
     print(eventStats)
-
+    print(f"=> Event statistics stored in ./data/{base_day}_{end_day}_eventStats.csv")
+    #* Updates baseline
+    if baseline:
+        with shelve.open('csci262asgn3',writeback=True) as db:
+            if 'BaselineEventStats' not in db.keys():
+                db['BaseLineEventStats'] = {}
+            for i,k in eventStats.iterrows():
+                eventStatData = EventStats(i,k['Mean'],k['StdDev'])
+                db['BaseLineEventStats'][i] = eventStatData
+        exportedBaseline = export_shelve_table('BaseLineEventStats')
+        print(f"=> New Baseline event statistics stored in {exportedBaseline}")
 
     print(f"\n => Event Daily Totals ")
     dailyTotals = pd.DataFrame()

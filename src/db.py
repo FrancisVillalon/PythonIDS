@@ -31,4 +31,12 @@ def export_shelve_contents():
             with open(f'./exports/{table_name}_data.txt','w') as file:
                 file.write(f"{len(db[table_name])}\n")
                 for key in db[table_name]:
-                    file.write(f"{key}:{db[table_name][key]}\n")
+                    file.write(f"{db[table_name][key]}\n")
+def export_shelve_table(table_name):
+    db_name = 'csci262asgn3'
+    with shelve.open(db_name) as db:
+        with open(f'./exports/{table_name}_data.txt','w') as file:
+            file.write(f"{len(db[table_name])}\n")
+            for key in db[table_name]:
+                file.write(f"{db[table_name][key]}\n")
+    return f'./exports/{table_name}_data.txt'

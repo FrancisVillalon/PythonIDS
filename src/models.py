@@ -16,6 +16,13 @@ class EventStats:
     def __repr__(self):
         return f'{self.name}:{self.mean}:{self.stdDev}:'
 
+    def to_dict(self):
+        return {
+            'EventName': str(self.name),
+            'Mean': str(self.mean),
+            'StdDev': str(self.stdDev),
+        }
+
 # Used to get event data from Events.txt
 class Event:
     def __init__ (self,eventName,eventType, min, max, eventWeight):
@@ -27,6 +34,15 @@ class Event:
     
     def __repr__(self):
         return f'{self.name}:{self.type}:{self.min}:{self.max}:{self.weight}:'
+    
+    def to_dict(self):
+        return {
+            'EventName': str(self.name),
+            'EventType': str(self.type),
+            'Min': str(self.min),
+            'Max': str(self.max),
+            'Weight': str(self.weight),
+        }
     
 # Creates generator for given class
 class EventGenerator:
