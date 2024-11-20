@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from src.activityEngine import activityEngine
 from src.analysisEngine import analysisEngine
 from src.alertEngine import alertEngine
+from src.utils import clean_up
 # User generates data based on initial stats and events
 # System saves the initial stats and events in a shelve database
 # User analyses generated data to get new events and stats
@@ -60,23 +61,8 @@ def main():
         end_day = base_day + timedelta(days=(days-1))
 
         # Clean existing data
-        print(f"\n *** Clean up ***")
-        if os.path.exists("./logs"):
-            print("=> Cleaning existing logs")
-            os.system("rm -rf ./logs")
-        if not os.path.exists("./logs"):
-            print('=> Creating logs directory')
-            os.makedirs("./logs")
-        if os.path.exists("./data"):
-            print("=> Cleaning existing data")
-            os.system("rm -rf ./data")
-        if not os.path.exists("./data"):
-            os.makedirs("./data")
-        if os.path.exists("./exports"):
-            print("=> Cleaning existing exports")
-            os.system("rm -rf ./exports")
-        if not os.path.exists("./exports"):
-            os.makedirs("./exports")
+        clean_up()
+
 
         # * Setup
         print(f"\n *** Initialising IDS ***")

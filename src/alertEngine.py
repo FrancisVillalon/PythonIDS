@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np 
 import shelve
-import os
 from activityEngine import activityEngine 
 from analysisEngine import analysisEngine
 from db import *
 from setup import *
 from datetime import datetime, timedelta
 import sys
+from utils import clean_up
 
 
 
@@ -29,18 +29,7 @@ def alertEngine(stats_file, days):
     end_day = base_day + timedelta(days=(days-1))
 
     # * clean up existing data and logs
-    print(f"\n *** Clean up ***")
-    if os.path.exists("./logs"):
-        print("=> Cleaning existing logs")
-        os.system("rm -rf ./logs")
-    if not os.path.exists("./logs"):
-        print('=> Creating logs directory')
-        os.makedirs("./logs")
-    if os.path.exists("./data"):
-        print("=> Cleaning existing data")
-        os.system("rm -rf ./data")
-    if not os.path.exists("./data"):
-        os.makedirs("./data")
+    clean_up()
 
     # * Read the stats file 
     read_stats(stats_file)
