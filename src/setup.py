@@ -34,9 +34,3 @@ def read_events(filename):
 
 
 
-if __name__ == "__main__":
-    reset_shelve()
-    read_stats('Stats.txt')
-    read_events('Events.txt')
-    print_shelve_contents()
-    export_shelve_contents()

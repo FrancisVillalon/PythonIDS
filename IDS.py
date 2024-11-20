@@ -7,7 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 import argparse
 from src.db import *
 from src.models import *
-from src.setup import read_events, read_stats, reset_shelve
+from src.main import read_events, read_stats
 from datetime import datetime, timedelta
 from activityEngine import activityEngine
 from analysisEngine import analysisEngine
@@ -59,18 +59,6 @@ def main():
         base_day = datetime.now().date()
         end_day = base_day + timedelta(days=(days-1))
 
-        # * Setup
-        print(f"\n *** Initialising IDS ***")
-        print(f"=> Setting Date Range")
-        print(f"Start Date: {base_day}, End Date: {end_day}")
-        print(f"=> Setting up the database with data from {args.events_file} and {args.stats_file}")
-        reset_shelve()
-        read_stats(args.stats_file)
-        read_events(args.events_file)
-        print(f"=> Database setup complete.")
-        print_shelve_contents()
-        export_shelve_contents()
-
         # Clean existing data
         print(f"\n *** Clean up ***")
         if os.path.exists("./logs"):
@@ -89,6 +77,19 @@ def main():
             os.system("rm -rf ./exports")
         if not os.path.exists("./exports"):
             os.makedirs("./exports")
+
+        # * Setup
+        print(f"\n *** Initialising IDS ***")
+        print(f"=> Setting Date Range")
+        print(f"Start Date: {base_day}, End Date: {end_day}")
+        print(f"=> Setting up the database with data from {args.events_file} and {args.stats_file}")
+        reset_shelve()
+        read_stats(args.stats_file)
+        read_events(args.events_file)
+        print(f"=> Database setup complete.")
+        print_shelve_contents()
+        export_shelve_contents()
+
 
         print(f'=> Cleaning complete')
         print(f"\n *** Generating activity for {args.days} days ***")
