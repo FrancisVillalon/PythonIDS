@@ -13,15 +13,20 @@ def delete_all_files_in_folder(folder_path):
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
 
-def clean_up():
+def clean_up(target=None):
     print(f"\n *** Clean up ***")
-    delete_all_files_in_folder("./logs")
+    if target:
+        delete_all_files_in_folder(target)
+    else:
+        delete_all_files_in_folder("./logs")
+        delete_all_files_in_folder("./data")
+        delete_all_files_in_folder("./exports")
+
+    # * Make folder it not exists
     if not os.path.exists("./logs"):
         os.makedirs("./logs")
-    delete_all_files_in_folder("./data")
     if not os.path.exists("./data"):
         os.makedirs("./data")
-    delete_all_files_in_folder("./exports")
     if not os.path.exists("./exports"):
         os.makedirs("./exports")
     print("Clean up completed")

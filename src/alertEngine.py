@@ -29,7 +29,8 @@ def alertEngine(stats_file, days):
     end_day = base_day + timedelta(days=(days-1))
 
     # * clean up existing data and logs
-    clean_up()
+    clean_up(target='./logs')
+    clean_up(target='./data')
 
     # * Read the stats file 
     read_stats(stats_file)
