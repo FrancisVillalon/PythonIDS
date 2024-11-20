@@ -1,5 +1,9 @@
-from models import EventStats, Event
+from models import EventStats, Event, EventLog
 from db import *
+import numpy as np
+import pandas as pd
+from datetime import datetime
+import json
 
 # Read the Stats.txt file and store the data in a shelve database
 def read_stats(filename):
@@ -30,7 +34,3 @@ def read_events(filename):
             maxWeight = float(eventDetails[3] if eventDetails[3] else float('inf'))
             eventWeight = float(eventDetails[4])
             store_in_shelve('Event', eventName, Event(eventName, eventType, minWeight, maxWeight, eventWeight))
-
-
-
-

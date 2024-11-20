@@ -1,12 +1,7 @@
-import sys
-import os
-
-# Add the src directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-
-from src.models import *
-from src.db import *
+from models import *
+from db import *
 from datetime import datetime, timedelta
+import os
 
 def activityEngine(base_day,days):
 		print(f" \n*** Running Actvity Engine ***")

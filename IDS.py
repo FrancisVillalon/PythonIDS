@@ -7,11 +7,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 import argparse
 from src.db import *
 from src.models import *
-from src.main import read_events, read_stats
+from src.setup import read_events, read_stats
 from datetime import datetime, timedelta
-from activityEngine import activityEngine
-from analysisEngine import analysisEngine
-from alertEngine import alertEngine
+from src.activityEngine import activityEngine
+from src.analysisEngine import analysisEngine
+from src.alertEngine import alertEngine
 # User generates data based on initial stats and events
 # System saves the initial stats and events in a shelve database
 # User analyses generated data to get new events and stats

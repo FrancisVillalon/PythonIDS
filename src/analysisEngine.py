@@ -1,15 +1,9 @@
-import sys
-import os
-
-# Add the src directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-
 import pandas as pd
 import numpy as np
 import shelve
 import os 
-from src.models import EventStats, Event
-from src.db import *
+from models import EventStats, Event
+from db import *
 
 def parseData(folderPath,outputPath):
     df = pd.DataFrame(columns=['EventTime','EventName','EventValue'])

@@ -1,16 +1,11 @@
-import sys
-import os
-
-# Add the src directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-
 import pandas as pd
 import numpy as np 
 import shelve
+import os
 from activityEngine import activityEngine 
 from analysisEngine import analysisEngine
-from src.db import *
-from src.main import *
+from db import *
+from setup import *
 from datetime import datetime, timedelta
 import sys
 
